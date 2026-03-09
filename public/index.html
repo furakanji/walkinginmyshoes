@@ -11,6 +11,35 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Onboarding Overlay -->
+    <div id="onboarding" class="onboarding-overlay hidden">
+        <div class="onboarding-slide active" id="slide-1">
+            <img src="assets/ob1.png" alt="Colora la mappa">
+            <h2>Colora la tua città</h2>
+            <p>Esplora il mondo reale. Ogni strada su cui cammini diventa la tua tela arancione.</p>
+        </div>
+        <div class="onboarding-slide" id="slide-2">
+            <img src="assets/ob2.png" alt="Street Boss">
+            <h2>Diventa Street Boss</h2>
+            <p>Cammina di più degli altri su una specifica strada per conquistarla e scalare la classifica.</p>
+        </div>
+        <div class="onboarding-slide" id="slide-3">
+            <img src="assets/ob3.png" alt="GPS">
+            <h2>GPS Necessario</h2>
+            <p>Per giocare e tracciare le tue conquiste, abilita i servizi di localizzazione ad alta precisione quando richiesto.</p>
+        </div>
+        
+        <div class="onboarding-controls">
+            <div class="dots">
+                <span class="dot-indicator active"></span>
+                <span class="dot-indicator"></span>
+                <span class="dot-indicator"></span>
+            </div>
+            <button id="btn-next-slide" class="btn-primary">Avanti</button>
+            <button id="btn-finish-onboarding" class="btn-primary hidden">Inizia l'Avventura!</button>
+        </div>
+    </div>
+
     <!-- Fullscreen Map Container -->
     <div id="map-container">
         <!-- The Google Map will be injected here -->

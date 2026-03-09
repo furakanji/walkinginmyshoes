@@ -15,6 +15,50 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
+// --- Onboarding Logic ---
+const onboardingSection = document.getElementById('onboarding');
+const btnNextSlide = document.getElementById('btn-next-slide');
+const btnFinishOnboarding = document.getElementById('btn-finish-onboarding');
+const slides = document.querySelectorAll('.onboarding-slide');
+const dots = document.querySelectorAll('.dot-indicator');
+let currentSlideIndex = 0;
+
+if (!localStorage.getItem('walkshoes_onboarding_done')) {
+    onboardingSection.classList.remove('hidden');
+}
+
+btnNextSlide.addEventListener('click', () => {
+    slides[currentSlideIndex].classList.remove('active');
+    dots[currentSlideIndex].classList.remove('active');
+    
+    currentSlideIndex++;
+    
+    slides[currentSlideIndex].classList.add('active');
+    dots[currentSlideIndex].classList.add('active');
+    
+    if (currentSlideIndex === slides.length - 1) {
+        btnNextSlide.classList.add('hidden');
+        btnFinishOnboarding.classList.remove('hidden');
+    }
+});
+
+btnFinishOnboarding.addEventListener('click', () => {
+    // Richiesta esplicita permessi GPS
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+            () => console.log("Permessi GPS accordati in fase di onboarding."),
+            (err) => console.warn("Permessi GPS negati/errore in onboarding:", err),
+            { enableHighAccuracy: true }
+        );
+    }
+    
+    localStorage.setItem('walkshoes_onboarding_done', 'true');
+    onboardingSection.style.opacity = '0';
+    setTimeout(() => {
+        onboardingSection.classList.add('hidden');
+    }, 500);
+});
+
 // --- Servizio Worker Registration per PWA ---
 if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
@@ -85,6 +129,7 @@ btnStart.addEventListener('click', () => {
         isSessionActive = true;
         btnStart.textContent = "Termina sessione";
         btnStart.classList.add('stop');
+        btnStart.classList.add('recording'); // Sposta il bottone in basso per liberare il centro
         dashboard.classList.remove('hidden');
         
         setStatus("Ricerca segnale...", "warning");
@@ -95,6 +140,7 @@ btnStart.addEventListener('click', () => {
         isSessionActive = false;
         btnStart.textContent = "Inizia a colorare";
         btnStart.classList.remove('stop');
+        btnStart.classList.remove('recording'); // Riporta al centro
         
         setStatus("In pausa", "default");
         tracker.stop();
