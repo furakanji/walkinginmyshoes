@@ -63,10 +63,9 @@ const tracker = new Tracker({
             }
         }
 
-        // Se map.js ha registrato updateMapPosition, aggiornala
-        // Usiamo un controllo dinamico se stiamo testando senza API Key
-        if (typeof window.updateMapPosition === 'function') {
-            window.updateMapPosition(data.latestPoint, true);
+        // Aggiorna la mappa con la posizione reale
+        if (typeof updateMapPosition === 'function') {
+            updateMapPosition(data.latestPoint, true);
         }
 
         setStatus("Attivo", "active");
