@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Walking in my shoes</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#ff5722">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for modern typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Fullscreen Map Container -->
+    <div id="map-container">
+        <!-- The Google Map will be injected here -->
+        <div id="map"></div>
+    </div>
+
+    <!-- UI Overlay (Glassmorphism) -->
+    <main class="ui-overlay">
+        
+        <!-- Top Bar: Status and Battery Saver -->
+        <header class="top-bar glass-panel">
+            <div class="status-indicator">
+                <span id="gps-status" class="dot default"></span>
+                <span id="status-text">Pronto</span>
+            </div>
+            <button id="btn-battery" class="icon-btn" title="Battery Saver Mode" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h-2V2h-4v2H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z"></path><path d="M12 9v6"></path><path d="M9 12h6"></path></svg>
+            </button>
+        </header>
+
+        <!-- Dynamic Data Dashboard -->
+        <section class="dashboard glass-panel hidden" id="live-dashboard">
+            <div class="stat-box">
+                <span class="stat-label">Distanza</span>
+                <span class="stat-value" id="val-distance">0.00 <small>km</small></span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">Velocità</span>
+                <span class="stat-value" id="val-speed">0 <small>km/h</small></span>
+            </div>
+            <div class="stat-box accent">
+                <span class="stat-label">Strade</span>
+                <span class="stat-value" id="val-streets">0</span>
+            </div>
+        </section>
+
+        <!-- Main Action Button -->
+        <div class="action-dock">
+            <button id="btn-start" class="btn-primary ripple">
+                Inizia a colorare
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Scripts (ES Modules) -->
+    <script type="module" src="app.js"></script>
+    
+    <script>
+      // Temporary stub for Google Maps callback to fire an event,
+      // because ES Modules (app.js) are deferred and might load after Maps API.
+      window.initMap = function() {
+        window.dispatchEvent(new Event('googleMapsLoaded'));
+      };
+    </script>
+    <!-- Google Maps script -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCTFOXbxqL5ILu2TnC7gBM2dp17bIZQ-O4&callback=initMap"></script>
+</body>
+</html>
