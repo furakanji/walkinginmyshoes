@@ -8,6 +8,8 @@ let userPathCoordinates = [];
  * Inizializza Google Maps. 
  * Requisiti: lo script tag di Google Maps deve aver invocato "initMap" callback.
  */
+let directionsService;
+
 function initializeGoogleMap() {
     // Coordinate base iniziali (es. Centro di Roma)
     const initialPosition = { lat: 41.9028, lng: 12.4964 };
@@ -50,14 +52,15 @@ function initializeGoogleMap() {
     };
 
     map = new google.maps.Map(document.getElementById("map"), mapOptions);
+    directionsService = new google.maps.DirectionsService();
 
     // Inizializza la polyline del percorso utente
     userPolyline = new google.maps.Polyline({
         path: userPathCoordinates,
         geodesic: true,
-        strokeColor: "#ff5722", // matches var(--primary)
+        strokeColor: "#FF3D00", // matches var(--primary) - More vivid
         strokeOpacity: 1.0,
-        strokeWeight: 4,
+        strokeWeight: 7, // Thicker
     });
     userPolyline.setMap(map);
     
@@ -88,6 +91,28 @@ if (window.google && window.google.maps) {
     window.addEventListener('googleMapsLoaded', initializeGoogleMap);
 }
 
+function getDistance(p1, p2) {
+    const R = 6371e3; // metres
+    const lat1 = p1.lat() * Math.PI/180;
+    const lat2 = p2.lat() * Math.PI/180;
+    const dLat = (p2.lat()-p1.lat()) * Math.PI/180;
+    const dLng = (p2.lng()-p1.lng()) * Math.PI/180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng/2) * Math.sin(dLng/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+
+/**
+ * Centra la Mappa forzatamente sulla posizione attuale del marker.
+ */
+export function centerMapOnCurrentPosition() {
+    if (map && userMarker) {
+        map.panTo(userMarker.getPosition());
+        map.setZoom(17);
+    }
+}
+
 /**
  * Funzione esposta per aggiornare la mappa con un nuovo punto
  * @param {Object} coords - {lat, lng}
@@ -100,13 +125,39 @@ export function updateMapPosition(coords, centerMap = true) {
     
     // Aggiorna posizione marker
     userMarker.setPosition(latLng);
-    
-    // Aggiunge punto alla traccia percorsa
-    userPathCoordinates.push(latLng);
-    userPolyline.setPath(userPathCoordinates); // Forza l'aggiornamento
 
     // Centra mappa se richiesto
     if (centerMap) {
         map.panTo(latLng);
     }
+
+    if (userPathCoordinates.length > 0) {
+        const lastPoint = userPathCoordinates[userPathCoordinates.length - 1];
+        const dist = getDistance(lastPoint, latLng);
+        
+        // Se c'è un gap sospetto (>20m) a causa di GPS in background, chiediamo a Google la strada.
+        if (dist > 20 && dist < 2000) {
+            directionsService.route({
+                origin: lastPoint,
+                destination: latLng,
+                travelMode: google.maps.TravelMode.WALKING
+            }, (response, status) => {
+                if (status === 'OK' && response.routes && response.routes.length > 0) {
+                    const path = response.routes[0].overview_path;
+                    for (let i = 1; i < path.length; i++) {
+                        userPathCoordinates.push(path[i]);
+                    }
+                    userPolyline.setPath(userPathCoordinates);
+                } else {
+                    userPathCoordinates.push(latLng);
+                    userPolyline.setPath(userPathCoordinates);
+                }
+            });
+            return;
+        }
+    }
+
+    // Aggiunge punto alla traccia percorsa (normale movimento)
+    userPathCoordinates.push(latLng);
+    userPolyline.setPath(userPathCoordinates); // Forza l'aggiornamento
 }

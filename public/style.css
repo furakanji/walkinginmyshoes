@@ -197,25 +197,59 @@ body {
 }
 
 .btn-primary.recording {
-  /* Quando l'utente sta camminando, releghiamo il bottone in basso per liberare il centro */
   position: fixed;
-  bottom: max(20px, env(safe-area-inset-bottom, 20px));
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
+  bottom: 120px;
+  left: 20px;
+  transform: none;
+  width: auto;
+  min-width: 0;
+  max-width: 160px;
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  z-index: 50;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-primary:active {
   transform: scale(0.96) translateX(0); /* Ignore parent transform scaling if centered */
 }
 .btn-primary.recording:active {
-  transform: translateX(-50%) scale(0.96);
+  transform: scale(0.96);
 }
 
 .btn-primary.stop {
   background: linear-gradient(135deg, var(--danger), #c62828);
   box-shadow: 0 8px 24px rgba(244, 67, 54, 0.4);
 }
+
+/* Center Map Button */
+.center-map-btn {
+  position: fixed;
+  bottom: 120px;
+  right: 20px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+  cursor: pointer;
+  color: var(--primary);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform 0.2s;
+}
+.center-map-btn:active {
+  transform: scale(0.9);
+}
+.center-map-btn svg { width: 22px; height: 22px; }
 
 /* Helpers */
 .hidden { display: none !important; }

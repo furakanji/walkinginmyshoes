@@ -1,5 +1,5 @@
 import { Tracker } from './src/tracker.js';
-import { updateMapPosition } from './src/map.js';
+import { updateMapPosition, centerMapOnCurrentPosition } from './src/map.js';
 import { auth, db, signInAnonymously, onAuthStateChanged, collection, addDoc, serverTimestamp } from './src/firebase.js';
 import { fetchStreetName } from './src/overpass.js';
 
@@ -127,10 +127,11 @@ btnStart.addEventListener('click', () => {
     if (!isSessionActive) {
         // START
         isSessionActive = true;
-        btnStart.textContent = "Termina sessione";
+        btnStart.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="vertical-align: middle; margin-right: 6px;"><path d="M6 6h12v12H6z"></path></svg> Termina`;
         btnStart.classList.add('stop');
         btnStart.classList.add('recording'); // Sposta il bottone in basso per liberare il centro
         dashboard.classList.remove('hidden');
+        document.getElementById('btn-center-map').classList.remove('hidden');
         
         setStatus("Ricerca segnale...", "warning");
         tracker.start();
@@ -141,6 +142,7 @@ btnStart.addEventListener('click', () => {
         btnStart.textContent = "Inizia a colorare";
         btnStart.classList.remove('stop');
         btnStart.classList.remove('recording'); // Riporta al centro
+        document.getElementById('btn-center-map').classList.add('hidden');
         
         setStatus("In pausa", "default");
         tracker.stop();
@@ -183,3 +185,8 @@ function setStatus(text, dotClass) {
     statusText.innerText = text;
     gpsStatusDot.className = 'dot ' + dotClass;
 }
+
+// Center Map listener
+document.getElementById('btn-center-map').addEventListener('click', () => {
+    centerMapOnCurrentPosition();
+});
